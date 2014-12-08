@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Geo Location Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Example of how geo location api works">
+    <meta name="author" content="Victor Shi">
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <script src="js/lodash.js"></script>
+    <script src="js/angular-google-maps.min.js"></script>
+    <script src="event.js"></script>
+    <!--<script src="ui-map.min.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <style type="text/css">
+        .map {
+            height: 400px;
+            width: 100%;
+        }
+        .main {
+            margin-top: 30px;
+        }
+        .angular-google-map-container { height: 400px; }
+    </style>
+
+</head>
+
+<body ng-app="geo">
+    <div class="container main" ng-controller="mainController">
+        <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+    </div>
+</body>
+<script type="text/javascript">
+    var app = angular.module('geo', ['uiGmapgoogle-maps'])
+    .controller("mainController", function ($scope) {
+
+        $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+
+    });
+
+</script>
+</html>

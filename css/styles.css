@@ -1,0 +1,37 @@
+.map {
+    height: 400px;
+    width: 100%;
+}
+.main {
+    margin-top: 30px;
+}
+.angular-google-map-container { 
+	height: 400px; 
+}
+.weather-days {
+	text-align: center;
+	background-color: rgba(50, 84, 116, 0.45);
+	height: 160px;
+	/*width: 16.666666667%;*/
+	border-left: 1px solid rgba(247, 247, 247, 0.28);
+}
+.today {
+	background-color: rgba(43, 156, 192, 0.34);
+}
+.date, .temp-title, .max-temp, .min-temp, .searcher-title {
+	position: relative;
+	float: left;
+	width: 100%;
+}
+.badge{
+	margin-top: 20px;
+	margin-bottom: 15px;
+}
+.latest-location:hover{
+	opacity: 0.8;
+	cursor: pointer;
+}
+.google-searcher{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}

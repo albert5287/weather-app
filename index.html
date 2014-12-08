@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="geo">
+<head>
+    <meta charset="utf-8">
+    <title>Yahoo Weather Test App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Albert Gracia">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>-->
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/lodash.js"></script>
+    <script src="js/angular-google-maps.min.js"></script>
+    <!--<script src="js/angular-reverse-geocode.js"></script>-->
+    <script src="js/angular-google-places.js"></script>
+    <!--<script src="js/localStorage.js"></script>-->
+    <!--<script src="event.js"></script>-->
+    <!--<script src="ui-map.min.js"></script>-->
+    
+
+</head>
+
+<body>
+    <div class="container" ng-controller="mainController">
+        <h1>The weather in {{weatherInfo.query.results.channel.location.city}}, {{weatherInfo.query.results.channel.location.country}} is:</h1>
+        <div class="row">
+            <div class="col-sm-8">
+                
+                <div class="row"> 
+                    <div class="col-xs-3 weather-days today" ng-repeat="day in infoWeatherDays" ng-show="$index == 0">
+                        <h3>{{day.day}}</h3>
+                        <span class="date">{{day.date}}</span>
+                        <span class="temp-title">
+                            {{weatherInfo.query.results.channel.item.condition.temp}} ºC, {{weatherInfo.query.results.channel.item.condition.text}}
+                        </span>
+                        <span class="max-temp">
+                            Max:{{day.high}} ºC
+                        </span>
+                        <span class="min-temp">
+                            Min: {{day.low}} ºC
+                        </span>
+                    </div>
+                    <div class="col-xs-9">
+                        <div class="row">
+                            <div class="weather-days col-xs-3" ng-repeat="day in infoWeatherDays" ng-show="$index > 0">
+                                <div>
+                                    <span class="badge">{{day.day}}</span>
+                                    <br />
+                                    <span class="date">{{day.date}}</span>
+                                    <span>{{day.text}}</span>
+                                    <span class="max-temp">
+                                        Max: {{day.high}} ºC
+                                    </span>
+                                    <span class="min-temp">
+                                        Min: {{day.low}} ºC
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<ul class="example-animate-container">
+                    <li class="animate-repeat" ng-repeat="day in infoWeatherDays" ng-show="$index > 0">
+                      [{{$index}}] {{day}}.
+                    </li>
+                  </ul>-->
+                </div>
+                
+                <div class="row">
+                    <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+                       <ui-gmap-marker coords="marker.coords" idkey="marker.id">
+                        </ui-gmap-marker>
+                    </ui-gmap-google-map>
+                    
+                </div>
+                <!--<div class="row" ng-show="showResult()">
+                   Latitude: {{lat}} <br />
+                   Longitude: {{lng}} <br />
+                   Accuracy: {{accuracy}}
+                   <span class="location">{{weatherInfo.query.results.channel.location.city}}, {{weatherInfo.query.results.channel.location.country}}</span>
+                   <span class="weather-condition">{{weatherInfo.query.results.channel.item.condition.date}}, {{weatherInfo.query.results.channel.item.condition.temp}} ºC, {{weatherInfo.query.results.channel.item.condition.text}}, {{weatherInfo.query.results.channel.item.description}}</span>
+                   
+                </div>-->
+                <div class="row" ng-show="!showResult()">
+                    Error : {{error}}
+                    Error Code: {{error.code}}
+                </div>  
+            </div>
+            <div class="col-sm-4">
+                <div>
+                    <span class="searcher-title">Find how's the weather in:</span>
+                    <div class="google-searcher">
+                        <google-places location=location ></google-places>
+                        <button ng-click="doSearch()" class="btn btn-large btn-primary">Search</button>
+                    </div>
+                </div>
+                <div>
+                    Latest places:
+                    <ul>
+                        <li ng-repeat="place in latestPlaces" class="latest-location" ng-attr-placeId="{{$index}}" ng-click="updateWithLatestLocation()">
+                            {{place.info.query.results.channel.location.city}}, {{place.info.query.results.channel.location.country}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
