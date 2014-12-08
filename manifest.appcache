@@ -1,0 +1,19 @@
+CACHE MANIFEST
+
+CACHE:
+css/bootstrap.css
+css/styles.css
+http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places
+js/angular.js
+js/controllers.js
+js/lodash.js
+js/angular-google-maps.min.js
+js/angular-google-places.js
+
+NETWORK:
+*
+http://*
+https://*
+
+SETTINGS:
+prefer-online

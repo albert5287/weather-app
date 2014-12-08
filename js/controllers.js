@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module("geo", ["uiGmapgoogle-maps", "angularGooglePlaces"])
-    .controller("mainController", function (LS, $scope, $http) {
+    .controller("mainController", function (LS, onlineStatus, $scope, $http) {
 
 
 
@@ -17,12 +17,14 @@ var app = angular.module("geo", ["uiGmapgoogle-maps", "angularGooglePlaces"])
     	$scope.setContPlaces = function(val){
     		return LS.setContPlaces(val);
     	}
+	 
+		$scope.$watch('onlineStatus.isOnline()', function(online) {
+    		$scope.online_status_string = online ? 'online' : 'offline';
+		});
+        
+        $scope.onlineStatus = onlineStatus;
     	$scope.latestPlaces = $scope.getLatestPlaces()== null ? [] : JSON.parse($scope.getLatestPlaces());
-    	console.log($scope.latestPlaces);
     	$scope.contPlaces = $scope.getContPlaces() == null ? -1 : $scope.getContPlaces(); // if its -1 is the first time in the app
-
-    	// $scope.latestPlaces = [];
-    	// $scope.contPlaces = -1;
 
         $scope.lat = "0";
         $scope.lng = "0";
@@ -40,14 +42,22 @@ var app = angular.module("geo", ["uiGmapgoogle-maps", "angularGooglePlaces"])
         }
       
         $scope.showPosition = function (position) {
-            $scope.lat = position.coords.latitude;
-            $scope.lng = position.coords.longitude;
-            //$scope.location = $scope.lat+","+$scope.lng;
-            $scope.accuracy = position.coords.accuracy;
+        	if($scope.online_status_string === 'online'){
+	            $scope.lat = position.coords.latitude;
+	            $scope.lng = position.coords.longitude;
+	            //$scope.location = $scope.lat+","+$scope.lng;
+	            //$scope.accuracy = position.coords.accuracy;
 
-            $scope.showMap($scope.lat, $scope.lng);
+	            $scope.showMap($scope.lat, $scope.lng);
 
-            $scope.getInfoWeather($scope.lat, $scope.lng);        
+	            $scope.getInfoWeather($scope.lat, $scope.lng);   
+            }    
+            else{
+            	if($scope.latestPlaces.length > 0){
+            		$scope.weatherInfo = $scope.latestPlaces[0].info;
+            		$scope.infoWeatherDays = $scope.latestPlaces[0].info.query.results.channel.item.forecast;
+            	}
+            } 
             
             $scope.$apply();
             
@@ -121,28 +131,28 @@ var app = angular.module("geo", ["uiGmapgoogle-maps", "angularGooglePlaces"])
      
 
         //function to show an error code
-        $scope.showError = function (error) {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    $scope.error = "User denied the request for Geolocation."
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    $scope.error = "Location information is unavailable."
-                    break;
-                case error.TIMEOUT:
-                    $scope.error = "The request to get user location timed out."
-                    break;
-                case error.UNKNOWN_ERROR:
-                    $scope.error = "An unknown error occurred."
-                    break;
-            }
-            $scope.$apply();
-        }
+        // $scope.showError = function (error) {
+        //     switch (error.code) {
+        //         case error.PERMISSION_DENIED:
+        //             $scope.error = "User denied the request for Geolocation."
+        //             break;
+        //         case error.POSITION_UNAVAILABLE:
+        //             $scope.error = "Location information is unavailable."
+        //             break;
+        //         case error.TIMEOUT:
+        //             $scope.error = "The request to get user location timed out."
+        //             break;
+        //         case error.UNKNOWN_ERROR:
+        //             $scope.error = "An unknown error occurred."
+        //             break;
+        //     }
+        //     $scope.$apply();
+        // }
 
         //function to get the location
         $scope.getLocation = function () {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition($scope.showPosition, $scope.showError);
+                navigator.geolocation.getCurrentPosition($scope.showPosition, $scope.showPosition);
             }
             else {
                 $scope.error = "Geolocation is not supported by this browser.";
@@ -150,7 +160,6 @@ var app = angular.module("geo", ["uiGmapgoogle-maps", "angularGooglePlaces"])
         }
 
         $scope.doSearch = function(){
-        	console.log('doSearch');
         	if($scope.location === ''){
                     return false;
                 } else {
@@ -168,14 +177,19 @@ var app = angular.module("geo", ["uiGmapgoogle-maps", "angularGooglePlaces"])
         }
 
         $scope.updateWithLatestLocation = function(){
-        	console.log(this);
         	$scope.lat = this.place.lat;
         	$scope.lng = this.place.lng;
-        	$scope.showMap($scope.lat, $scope.lng);
-            $scope.getInfoWeather($scope.lat, $scope.lng);
-
-
+        	if($scope.online_status_string === 'online'){
+	        	$scope.showMap($scope.lat, $scope.lng);
+	            $scope.getInfoWeather($scope.lat, $scope.lng);
+	        }
+	        else{
+	        	$scope.weatherInfo = this.place.info;
+            	$scope.infoWeatherDays = this.place.info.query.results.channel.item.forecast;
+	        }
         }
+
+       
 
 
         $scope.getLocation();
@@ -200,6 +214,27 @@ app.factory("LS", function($window, $rootScope){
 	};
 });
 
+app.factory('onlineStatus', function ($window, $rootScope) {
+    var onlineStatus = {};
+
+    onlineStatus.onLine = $window.navigator.onLine;
+
+    onlineStatus.isOnline = function() {
+        return onlineStatus.onLine;
+    }
+
+    $window.addEventListener("online", function () {
+        onlineStatus.onLine = true;
+        $rootScope.$digest();
+    }, true);
+
+    $window.addEventListener("offline", function () {
+        onlineStatus.onLine = false;
+        $rootScope.$digest();
+    }, true);
+
+    return onlineStatus;
+});
 
 
             
